@@ -18,6 +18,7 @@ Shader "Flatten To Lightmap"
 
 		    HLSLPROGRAM 
 
+            #pragma editor_sync_compilation
             #pragma vertex vert
             #pragma fragment frag
 
