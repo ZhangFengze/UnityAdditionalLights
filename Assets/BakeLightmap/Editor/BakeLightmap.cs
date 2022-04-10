@@ -27,27 +27,10 @@ public class BakeLightmap : MonoBehaviour
         }
     }
 
-    private static RenderTexture texture;
-
     [MenuItem("ZFZ/bake")]
     public static void Bake()
     {
-        RenderPipelineManager.beginFrameRendering += RenderPipelineManager_beginFrameRendering;
-    }
-
-    private static void RenderPipelineManager_beginFrameRendering(ScriptableRenderContext context, Camera[] cameras)
-    {
-        Debug.Log("beginFrameRendering");
-        RenderPipelineManager.beginFrameRendering -= RenderPipelineManager_beginFrameRendering;
-        Bake(context);
-    }
-
-    private static void Bake(ScriptableRenderContext context)
-    {
-        //Debug.Assert(texture == null);
-
-        if (texture == null)
-            texture = new RenderTexture(512, 512, 0, RenderTextureFormat.R8);
+        var texture = new RenderTexture(512, 512, 0, RenderTextureFormat.R8);
 
         var cmd = new CommandBuffer();
         CoreUtils.SetRenderTarget(cmd, texture);
@@ -60,17 +43,8 @@ public class BakeLightmap : MonoBehaviour
             for(int subMeshIndex = 0; subMeshIndex < o.meshFilter.sharedMesh.subMeshCount; subMeshIndex++)
                 cmd.DrawMesh(o.meshFilter.sharedMesh, Matrix4x4.identity, mat, subMeshIndex, 0);
         }
-        context.ExecuteCommandBuffer(cmd);
+        Graphics.ExecuteCommandBuffer(cmd);
 
-        RenderPipelineManager.endFrameRendering += RenderPipelineManager_endFrameRendering1;
-    }
-
-    private static void RenderPipelineManager_endFrameRendering1(ScriptableRenderContext arg1, Camera[] arg2)
-    {
-        Debug.Log("endFrameRendering");
-        RenderPipelineManager.endFrameRendering -= RenderPipelineManager_endFrameRendering1;
-
-        Debug.Assert(texture != null);
         SaveTGA(texture, TextureFormat.R8, "Assets/output.tga");
 
         var settings = new TextureImporterSettings();
