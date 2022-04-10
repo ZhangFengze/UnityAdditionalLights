@@ -40,7 +40,7 @@ public class BakeLightmap : MonoBehaviour
         {
             cmd.SetGlobalVector("_LightmapScaleOffset", o.renderer.lightmapScaleOffset);
             for (int subMeshIndex = 0; subMeshIndex < o.meshFilter.sharedMesh.subMeshCount; subMeshIndex++)
-                cmd.DrawMesh(o.meshFilter.sharedMesh, Matrix4x4.identity, mat, subMeshIndex, 0);
+                cmd.DrawMesh(o.meshFilter.sharedMesh, o.go.transform.localToWorldMatrix, mat, subMeshIndex, 0);
         }
         Graphics.ExecuteCommandBuffer(cmd);
 
