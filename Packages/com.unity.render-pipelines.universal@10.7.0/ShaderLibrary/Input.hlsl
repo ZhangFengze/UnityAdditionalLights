@@ -26,6 +26,7 @@ struct InputData
     half3   bakedGI;
     float2  normalizedScreenSpaceUV;
     half4   shadowMask;
+    float2  lightmapUV;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -131,7 +131,7 @@ namespace UnityEngine.Rendering.Universal.Internal
             // Main light has an optimized shader path for main light. This will benefit games that only care about a single light.
             // Universal pipeline also supports only a single shadow light, if available it will be the main light.
             SetupMainLightConstants(cmd, ref renderingData.lightData);
-            SetupAdditionalLightConstants(cmd, ref renderingData);
+            // SetupAdditionalLightConstants(cmd, ref renderingData);
         }
 
         void SetupMainLightConstants(CommandBuffer cmd, ref LightData lightData)

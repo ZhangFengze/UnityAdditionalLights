@@ -32,6 +32,11 @@ void BuildInputData(Varyings input, SurfaceDescription surfaceDescription, out I
     inputData.bakedGI = SAMPLE_GI(input.lightmapUV, input.sh, inputData.normalWS);
     inputData.normalizedScreenSpaceUV = GetNormalizedScreenSpaceUV(input.positionCS);
     inputData.shadowMask = SAMPLE_SHADOWMASK(input.lightmapUV);
+#ifdef LIGHTMAP_ON
+    inputData.lightmapUV = input.lightmapUV; 
+#else
+    inputData.lightmapUV = float2(0, 0);
+#endif
 }
 
 PackedVaryings vert(Attributes input)

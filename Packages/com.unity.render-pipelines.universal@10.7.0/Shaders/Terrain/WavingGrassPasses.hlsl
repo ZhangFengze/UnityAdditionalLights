@@ -64,6 +64,11 @@ void InitializeInputData(GrassVertexOutput input, out InputData inputData)
     inputData.bakedGI = SAMPLE_GI(input.lightmapUV, input.vertexSH, inputData.normalWS);
     inputData.normalizedScreenSpaceUV = GetNormalizedScreenSpaceUV(input.clipPos);
     inputData.shadowMask = SAMPLE_SHADOWMASK(input.lightmapUV);
+#ifdef LIGHTMAP_ON
+    inputData.lightmapUV = input.lightmapUV; 
+#else
+    inputData.lightmapUV = float2(0, 0);
+#endif
 }
 
 

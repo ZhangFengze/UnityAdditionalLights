@@ -5,7 +5,6 @@ using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 using UnityEditor;
 
-[ExecuteAlways]
 public class BakeLightmap : MonoBehaviour
 {
     private class BakeObject
@@ -48,7 +47,7 @@ public class BakeLightmap : MonoBehaviour
         //Debug.Assert(texture == null);
 
         if (texture == null)
-            texture = new RenderTexture(512, 512, 16, RenderTextureFormat.ARGB32);
+            texture = new RenderTexture(512, 512, 0, RenderTextureFormat.R8);
 
         var cmd = new CommandBuffer();
         CoreUtils.SetRenderTarget(cmd, texture);
@@ -72,8 +71,18 @@ public class BakeLightmap : MonoBehaviour
         RenderPipelineManager.endFrameRendering -= RenderPipelineManager_endFrameRendering1;
 
         Debug.Assert(texture != null);
-        SaveTGA(texture, TextureFormat.RGBA32, $@"D:\Projects\BakeLightmap\Assets\output.tga");
-        AssetDatabase.Refresh();
+        SaveTGA(texture, TextureFormat.R8, "Assets/output.tga");
+
+        var settings = new TextureImporterSettings();
+        settings.textureType=TextureImporterType.SingleChannel;
+        settings.textureShape=TextureImporterShape.Texture2D;
+        settings.mipmapEnabled=false;
+        settings.singleChannelComponent=TextureImporterSingleChannelComponent.Red;
+
+        AssetDatabase.ImportAsset("Assets/output.tga", ImportAssetOptions.ForceSynchronousImport);
+        var importer=TextureImporter.GetAtPath("Assets/output.tga") as TextureImporter;
+        importer.SetTextureSettings(settings);
+        importer.SaveAndReimport();
 
         texture.Release();
         texture = null;

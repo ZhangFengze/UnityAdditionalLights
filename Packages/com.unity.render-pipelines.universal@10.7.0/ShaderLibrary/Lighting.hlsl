@@ -103,6 +103,8 @@ half AngleAttenuation(half3 spotDirection, half3 lightDirection, half2 spotAtten
 ///////////////////////////////////////////////////////////////////////////////
 //                      Light Abstraction                                    //
 ///////////////////////////////////////////////////////////////////////////////
+ 
+TEXTURE2D_X(_AdditionalLightsLightmap);    SAMPLER(sampler_AdditionalLightsLightmap);
 
 Light GetMainLight()
 {
@@ -842,18 +844,33 @@ half4 UniversalFragmentPBR(InputData inputData, SurfaceData surfaceData)
                                      inputData.normalWS, inputData.viewDirectionWS,
                                      surfaceData.clearCoatMask, specularHighlightsOff);
 
-#ifdef _ADDITIONAL_LIGHTS
-    uint pixelLightCount = GetAdditionalLightsCount();
-    for (uint lightIndex = 0u; lightIndex < pixelLightCount; ++lightIndex)
+// #ifdef _ADDITIONAL_LIGHTS
+//     uint pixelLightCount = GetAdditionalLightsCount();
+//     for (uint lightIndex = 0u; lightIndex < pixelLightCount; ++lightIndex)
+//     {
+//         Light light = GetAdditionalLight(lightIndex, inputData.positionWS, shadowMask);
+//         #if defined(_SCREEN_SPACE_OCCLUSION)
+//             light.color *= aoFactor.directAmbientOcclusion;
+//         #endif
+//         color += LightingPhysicallyBased(brdfData, brdfDataClearCoat,
+//                                          light,
+//                                          inputData.normalWS, inputData.viewDirectionWS,
+//                                          surfaceData.clearCoatMask, specularHighlightsOff);
+//     }
+// #endif
+
+#ifdef LIGHTMAP_ON
+    uint pixelLightIndex = SAMPLE_TEXTURE2D_X(_AdditionalLightsLightmap, sampler_AdditionalLightsLightmap, inputData.lightmapUV).r*256;
+    if (pixelLightIndex > 0)
     {
-        Light light = GetAdditionalLight(lightIndex, inputData.positionWS, shadowMask);
+        Light light = GetAdditionalPerObjectLight(pixelLightIndex - 1, inputData.positionWS);
         #if defined(_SCREEN_SPACE_OCCLUSION)
             light.color *= aoFactor.directAmbientOcclusion;
         #endif
         color += LightingPhysicallyBased(brdfData, brdfDataClearCoat,
-                                         light,
-                                         inputData.normalWS, inputData.viewDirectionWS,
-                                         surfaceData.clearCoatMask, specularHighlightsOff);
+                                        light,
+                                        inputData.normalWS, inputData.viewDirectionWS,
+                                        surfaceData.clearCoatMask, specularHighlightsOff);
     }
 #endif
 
