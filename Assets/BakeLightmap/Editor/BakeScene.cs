@@ -36,7 +36,8 @@ public static class BakeScene
                 out Vector4 _);
         }
 
-        data.AdditionalLightsLightmap = new Texture2D(0, 0);
+        data.Refresh();
+        data.AdditionalLightsLightmap = BakeLightmap.BakeAndSave("Assets/output.tga");
         data.Refresh();
     }
 

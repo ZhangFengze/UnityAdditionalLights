@@ -27,39 +27,47 @@ public class BakeLightmap : MonoBehaviour
         }
     }
 
-    [MenuItem("ZFZ/bake")]
-    public static void Bake()
+    public static Texture2D Bake()
     {
-        var texture = new RenderTexture(512, 512, 0, RenderTextureFormat.R8);
+        var rt = new RenderTexture(512, 512, 0, RenderTextureFormat.R8);
 
         var cmd = new CommandBuffer();
-        CoreUtils.SetRenderTarget(cmd, texture);
+        CoreUtils.SetRenderTarget(cmd, rt);
         CoreUtils.ClearRenderTarget(cmd, ClearFlag.All, Color.black);
 
         var mat = new Material(Shader.Find("Flatten To Lightmap"));
         foreach (var o in CollectBakeObjects())
         {
             cmd.SetGlobalVector("_LightmapScaleOffset", o.renderer.lightmapScaleOffset);
-            for(int subMeshIndex = 0; subMeshIndex < o.meshFilter.sharedMesh.subMeshCount; subMeshIndex++)
+            for (int subMeshIndex = 0; subMeshIndex < o.meshFilter.sharedMesh.subMeshCount; subMeshIndex++)
                 cmd.DrawMesh(o.meshFilter.sharedMesh, Matrix4x4.identity, mat, subMeshIndex, 0);
         }
         Graphics.ExecuteCommandBuffer(cmd);
 
-        SaveTGA(texture, TextureFormat.R8, "Assets/output.tga");
+        var texture = SaveTexture(rt, TextureFormat.R8);
+        rt.Release();
+        return texture;
+    }
+
+    public static Texture2D BakeAndSave(string path)
+    {
+        var lightmap = Bake();
+
+        File.WriteAllBytes(path, lightmap.EncodeToTGA());
 
         var settings = new TextureImporterSettings();
-        settings.textureType=TextureImporterType.SingleChannel;
-        settings.textureShape=TextureImporterShape.Texture2D;
-        settings.mipmapEnabled=false;
-        settings.singleChannelComponent=TextureImporterSingleChannelComponent.Red;
+        settings.textureType = TextureImporterType.SingleChannel;
+        settings.textureShape = TextureImporterShape.Texture2D;
+        settings.mipmapEnabled = false;
+        settings.singleChannelComponent = TextureImporterSingleChannelComponent.Red;
 
-        AssetDatabase.ImportAsset("Assets/output.tga", ImportAssetOptions.ForceSynchronousImport);
-        var importer=TextureImporter.GetAtPath("Assets/output.tga") as TextureImporter;
+        AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceSynchronousImport);
+        var importer = TextureImporter.GetAtPath(path) as TextureImporter;
         importer.SetTextureSettings(settings);
         importer.SaveAndReimport();
+        AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
 
-        texture.Release();
-        texture = null;
+        return AssetDatabase.LoadAssetAtPath<Texture2D>(path);
     }
 
     private static BakeObject[] CollectBakeObjects()
@@ -96,7 +104,7 @@ public class BakeLightmap : MonoBehaviour
         return go.GetComponent<SkinnedMeshRenderer>();
     }
 
-    private static void SaveTGA(RenderTexture rt, TextureFormat format, string path)
+    private static Texture2D SaveTexture(RenderTexture rt, TextureFormat format)
     {
         var texture = new Texture2D(rt.width, rt.height, format, false);
 
@@ -105,6 +113,6 @@ public class BakeLightmap : MonoBehaviour
         texture.ReadPixels(new Rect(0, 0, rt.width, rt.height), 0, 0);
         RenderTexture.active = oldRT;
 
-        File.WriteAllBytes(path, texture.EncodeToTGA());
+        return texture;
     }
 }
