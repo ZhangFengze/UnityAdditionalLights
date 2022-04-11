@@ -5,19 +5,43 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using UnityEditor;
+using static SetupSceneAdditionalLights;
 
 public static class BakeScene
 {
     private static string MagicGameObjectName = "SetupSceneAdditionalLights";
     private const int MaxLights = 16;
 
-    [MenuItem("ZFZ/Bake2")]
-    public static void Bake()
+    [MenuItem("ZFZ/BakeNone")]
+    public static void BakeNone()
     {
+        Bake(AdditionalLightingMode.None);
+    }
+
+    [MenuItem("ZFZ/BakeOneLight")]
+    public static void BakeOneLight()
+    {
+        Bake(AdditionalLightingMode.OneLight);
+    }
+
+    [MenuItem("ZFZ/BakeTwoLight")]
+    public static void BakeTwoLight()
+    {
+        Bake(AdditionalLightingMode.TwoLight);
+    }
+
+    public static void Bake(AdditionalLightingMode mode)
+    {
+        var data = GetOrCreateData();
+        data.mode = mode;
+        if (mode == AdditionalLightingMode.None)
+        {
+            data.AdditionalLightsCount = 0;
+            return;
+        }
+
         var rawLights = Object.FindObjectsOfType<Light>().Where(FilterLight).Take(MaxLights);
         NativeArray<VisibleLight> lights = new NativeArray<VisibleLight>(rawLights.Select(ToVisibleLight).ToArray(), Allocator.Temp);
-
-        var data = GetOrCreateData();
         data.AdditionalLightsCount = lights.Length;
         if (data.AdditionalLightsCount == 0)
             return;
@@ -37,7 +61,7 @@ public static class BakeScene
         }
 
         data.Refresh();
-        data.AdditionalLightsLightmap = BakeLightmap.BakeAndSave("Assets/output.tga");
+        data.AdditionalLightsLightmap = BakeLightmap.BakeAndSave(mode, "Assets/output.tga");
         data.Refresh();
     }
 

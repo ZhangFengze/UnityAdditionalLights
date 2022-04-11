@@ -5,6 +5,13 @@ using UnityEngine;
 [ExecuteAlways]
 public class SetupSceneAdditionalLights : MonoBehaviour
 {
+    public enum AdditionalLightingMode
+    {
+        None,
+        OneLight,
+        TwoLight,
+    }
+
     static private class LightConstantBuffer
     {
         public static int _AdditionalLightsCount;
@@ -15,6 +22,7 @@ public class SetupSceneAdditionalLights : MonoBehaviour
         public static int _AdditionalLightsLightmap;
     }
 
+    public AdditionalLightingMode mode;
     public int AdditionalLightsCount;
     public Vector4[] AdditionalLightPositions;
     public Vector4[] AdditionalLightColors;
@@ -34,6 +42,22 @@ public class SetupSceneAdditionalLights : MonoBehaviour
 
     public void Refresh()
     {
+        switch (mode)
+        {
+            case AdditionalLightingMode.None:
+                Shader.DisableKeyword("_ADDITIONAL_LIGHTS_1");
+                Shader.DisableKeyword("_ADDITIONAL_LIGHTS_2");
+                break;
+            case AdditionalLightingMode.OneLight:
+                Shader.EnableKeyword("_ADDITIONAL_LIGHTS_1");
+                Shader.DisableKeyword("_ADDITIONAL_LIGHTS_2");
+                break;
+            case AdditionalLightingMode.TwoLight:
+                Shader.DisableKeyword("_ADDITIONAL_LIGHTS_1");
+                Shader.EnableKeyword("_ADDITIONAL_LIGHTS_2");
+                break;
+        }
+
         Shader.SetGlobalVector(LightConstantBuffer._AdditionalLightsCount, new Vector4(AdditionalLightsCount, 0.0f, 0.0f, 0.0f));
         if (AdditionalLightsCount > 0)
         {

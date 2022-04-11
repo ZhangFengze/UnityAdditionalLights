@@ -860,7 +860,8 @@ half4 UniversalFragmentPBR(InputData inputData, SurfaceData surfaceData)
 // #endif
 
 #ifdef LIGHTMAP_ON
-    uint pixelLightIndex = SAMPLE_TEXTURE2D_X(_AdditionalLightsLightmap, sampler_AdditionalLightsLightmap, inputData.lightmapUV).r*255;
+#if defined(_ADDITIONAL_LIGHTS_1)
+    uint pixelLightIndex = SAMPLE_TEXTURE2D_X(_AdditionalLightsLightmap, sampler_AdditionalLightsLightmap, inputData.lightmapUV).r * 255;
     if (pixelLightIndex > 0)
     {
         Light light = GetAdditionalPerObjectLight(pixelLightIndex - 1, inputData.positionWS);
@@ -868,10 +869,27 @@ half4 UniversalFragmentPBR(InputData inputData, SurfaceData surfaceData)
             light.color *= aoFactor.directAmbientOcclusion;
         #endif
         color += LightingPhysicallyBased(brdfData, brdfDataClearCoat,
-                                        light,
-                                        inputData.normalWS, inputData.viewDirectionWS,
-                                        surfaceData.clearCoatMask, specularHighlightsOff);
+        light,
+        inputData.normalWS, inputData.viewDirectionWS,
+        surfaceData.clearCoatMask, specularHighlightsOff);
     }
+#elif defined(_ADDITIONAL_LIGHTS_2)
+    for (uint additionalLightIndex = 0; additionalLightIndex < 2; ++additionalLightIndex)
+    {
+        uint pixelLightIndex = SAMPLE_TEXTURE2D_X(_AdditionalLightsLightmap, sampler_AdditionalLightsLightmap, inputData.lightmapUV)[additionalLightIndex] * 255;
+        if (pixelLightIndex > 0)
+        {
+            Light light = GetAdditionalPerObjectLight(pixelLightIndex - 1, inputData.positionWS);
+            #if defined(_SCREEN_SPACE_OCCLUSION)
+                light.color *= aoFactor.directAmbientOcclusion;
+            #endif
+            color += LightingPhysicallyBased(brdfData, brdfDataClearCoat,
+            light,
+            inputData.normalWS, inputData.viewDirectionWS,
+            surfaceData.clearCoatMask, specularHighlightsOff);
+        }
+    }
+#endif
 #endif
 
 #ifdef _ADDITIONAL_LIGHTS_VERTEX
