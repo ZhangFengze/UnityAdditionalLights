@@ -29,7 +29,7 @@ public class BakeLightmap : MonoBehaviour
 
     public static Texture2D Bake()
     {
-        var rt = new RenderTexture(512, 512, 0, RenderTextureFormat.R8);
+        var rt = new RenderTexture(Lightmapping.lightingSettings.lightmapMaxSize, Lightmapping.lightingSettings.lightmapMaxSize, 0, RenderTextureFormat.R8);
 
         var cmd = new CommandBuffer();
         CoreUtils.SetRenderTarget(cmd, rt);
