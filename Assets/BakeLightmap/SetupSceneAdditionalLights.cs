@@ -9,7 +9,7 @@ public class SetupSceneAdditionalLights : MonoBehaviour
     {
         None,
         OneLight,
-        TwoLight,
+        TwoLights,
     }
 
     static private class LightConstantBuffer
@@ -52,7 +52,7 @@ public class SetupSceneAdditionalLights : MonoBehaviour
                 Shader.EnableKeyword("_ADDITIONAL_LIGHTS_1");
                 Shader.DisableKeyword("_ADDITIONAL_LIGHTS_2");
                 break;
-            case AdditionalLightingMode.TwoLight:
+            case AdditionalLightingMode.TwoLights:
                 Shader.DisableKeyword("_ADDITIONAL_LIGHTS_1");
                 Shader.EnableKeyword("_ADDITIONAL_LIGHTS_2");
                 break;
