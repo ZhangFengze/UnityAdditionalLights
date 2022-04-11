@@ -860,7 +860,7 @@ half4 UniversalFragmentPBR(InputData inputData, SurfaceData surfaceData)
 // #endif
 
 #ifdef LIGHTMAP_ON
-    uint pixelLightIndex = SAMPLE_TEXTURE2D_X(_AdditionalLightsLightmap, sampler_AdditionalLightsLightmap, inputData.lightmapUV).r*256;
+    uint pixelLightIndex = SAMPLE_TEXTURE2D_X(_AdditionalLightsLightmap, sampler_AdditionalLightsLightmap, inputData.lightmapUV).r*255;
     if (pixelLightIndex > 0)
     {
         Light light = GetAdditionalPerObjectLight(pixelLightIndex - 1, inputData.positionWS);
