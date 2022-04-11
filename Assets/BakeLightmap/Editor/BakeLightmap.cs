@@ -121,7 +121,7 @@ public class BakeLightmap : MonoBehaviour
         {
             case AdditionalLightingMode.OneLight:
                 return RenderTextureFormat.R8;
-            case AdditionalLightingMode.TwoLight:
+            case AdditionalLightingMode.TwoLights:
                 return RenderTextureFormat.RG16;
             default:
                 Debug.Assert(false);
@@ -135,7 +135,7 @@ public class BakeLightmap : MonoBehaviour
         {
             case AdditionalLightingMode.OneLight:
                 return TextureFormat.R8;
-            case AdditionalLightingMode.TwoLight:
+            case AdditionalLightingMode.TwoLights:
                 return TextureFormat.RG16;
             default:
                 Debug.Assert(false);
@@ -149,8 +149,8 @@ public class BakeLightmap : MonoBehaviour
         {
             case AdditionalLightingMode.OneLight:
                 return "OneLight";
-            case AdditionalLightingMode.TwoLight:
-                return "TwoLight";
+            case AdditionalLightingMode.TwoLights:
+                return "TwoLights";
             default:
                 Debug.Assert(false);
                 return "";
@@ -168,7 +168,7 @@ public class BakeLightmap : MonoBehaviour
                 settings.sRGBTexture = false;
                 settings.singleChannelComponent = TextureImporterSingleChannelComponent.Red;
                 break;
-            case AdditionalLightingMode.TwoLight:
+            case AdditionalLightingMode.TwoLights:
                 settings.textureType = TextureImporterType.Default;
                 settings.textureShape = TextureImporterShape.Texture2D;
                 settings.mipmapEnabled = false;

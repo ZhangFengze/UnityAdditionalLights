@@ -24,8 +24,8 @@ public static class BakeScene
         Bake(AdditionalLightingMode.OneLight);
     }
 
-    [MenuItem("ZFZ/BakeTwoLight")]
-    public static void BakeTwoLight()
+    [MenuItem("ZFZ/BakeTwoLights")]
+    public static void BakeTwoLights()
     {
         Bake(AdditionalLightingMode.TwoLight);
     }

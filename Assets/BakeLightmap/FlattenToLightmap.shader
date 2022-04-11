@@ -123,7 +123,7 @@ Shader "Flatten To Lightmap"
 
         Pass
         {
-            Name "TwoLight"
+            Name "TwoLights"
 
             HLSLPROGRAM
             #pragma editor_sync_compilation
