@@ -15,19 +15,6 @@ public class BakeLightmap : MonoBehaviour
         public GameObject go;
     }
 
-    private static BakeLightmap instance;
-    public static BakeLightmap Instance
-    {
-        get
-        {
-            if (instance == null)
-            {
-                instance = new BakeLightmap();
-            }
-            return instance;
-        }
-    }
-
     public static Texture2D Bake(AdditionalLightingMode mode)
     {
         var rt = new RenderTexture(Lightmapping.lightingSettings.lightmapMaxSize, Lightmapping.lightingSettings.lightmapMaxSize, 0, GetRenderTextureFormat(mode), RenderTextureReadWrite.Linear);
