@@ -61,7 +61,7 @@ Shader "Flatten To Lightmap"
             return o;
         }
 
-        half4 frag1light(v2f i) : SV_Target
+        float frag1light(v2f i) : SV_Target
         {
             uint mostImportantLightIndex = -1;
             Light mostImportantLight = (Light)0;
@@ -78,10 +78,10 @@ Shader "Flatten To Lightmap"
                 }
             }
 
-            return half4((mostImportantLightIndex + 1) / 255.h, 0, 0, 1);
+            return (mostImportantLightIndex + 1) / 16.f;
         }
 
-        half4 frag2lights(v2f i) : SV_Target
+        float frag2lights(v2f i) : SV_Target
         {
             uint lightIndex1 = -1;
             uint lightIndex2 = -1;
@@ -106,7 +106,8 @@ Shader "Flatten To Lightmap"
                 }
             }
 
-            return half4((lightIndex1 + 1) / 255.h, (lightIndex2 + 1) / 255.h, 0, 1);
+            uint combinedIndex = (lightIndex1 + 1) * 16 + (lightIndex2 + 1);
+            return combinedIndex / 256.f;
         }
         ENDHLSL
 

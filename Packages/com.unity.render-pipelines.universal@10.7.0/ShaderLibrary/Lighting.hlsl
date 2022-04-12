@@ -861,7 +861,7 @@ half4 UniversalFragmentPBR(InputData inputData, SurfaceData surfaceData)
 
 #ifdef LIGHTMAP_ON
 #if defined(_ADDITIONAL_LIGHTS_1)
-    uint pixelLightIndex = SAMPLE_TEXTURE2D_X(_AdditionalLightsLightmap, sampler_AdditionalLightsLightmap, inputData.lightmapUV).r * 255;
+    uint pixelLightIndex = SAMPLE_TEXTURE2D_X(_AdditionalLightsLightmap, sampler_AdditionalLightsLightmap, inputData.lightmapUV).r * 16;
     if (pixelLightIndex > 0)
     {
         Light light = GetAdditionalPerObjectLight(pixelLightIndex - 1, inputData.positionWS);
@@ -874,9 +874,11 @@ half4 UniversalFragmentPBR(InputData inputData, SurfaceData surfaceData)
         surfaceData.clearCoatMask, specularHighlightsOff);
     }
 #elif defined(_ADDITIONAL_LIGHTS_2)
-    for (uint additionalLightIndex = 0; additionalLightIndex < 2; ++additionalLightIndex)
+    uint combinedIndex = SAMPLE_TEXTURE2D_X(_AdditionalLightsLightmap, sampler_AdditionalLightsLightmap, inputData.lightmapUV).r * 256;
+    uint2 additionalLightIndices = uint2(combinedIndex / 16, combinedIndex % 16);
+    for (uint i = 0; i < 2; ++i)
     {
-        uint pixelLightIndex = SAMPLE_TEXTURE2D_X(_AdditionalLightsLightmap, sampler_AdditionalLightsLightmap, inputData.lightmapUV)[additionalLightIndex] * 255;
+        uint pixelLightIndex = additionalLightIndices[i];
         if (pixelLightIndex > 0)
         {
             Light light = GetAdditionalPerObjectLight(pixelLightIndex - 1, inputData.positionWS);

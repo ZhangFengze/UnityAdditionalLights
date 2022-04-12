@@ -54,15 +54,11 @@ public class BakeLightmap : MonoBehaviour
     public static Texture2D BakeAndSave(AdditionalLightingMode mode, string path)
     {
         var lightmap = Bake(mode);
-
         File.WriteAllBytes(path, lightmap.EncodeToTGA());
-
-        var settings = new TextureImporterSettings();
-        ConfigureImportSettings(mode, settings);
 
         AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceSynchronousImport);
         var importer = TextureImporter.GetAtPath(path) as TextureImporter;
-        importer.SetTextureSettings(settings);
+        ConfigureImporterSettings(mode, importer);
         importer.SaveAndReimport();
         AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
 
@@ -120,9 +116,8 @@ public class BakeLightmap : MonoBehaviour
         switch (mode)
         {
             case AdditionalLightingMode.OneLight:
-                return RenderTextureFormat.R8;
             case AdditionalLightingMode.TwoLights:
-                return RenderTextureFormat.RG16;
+                return RenderTextureFormat.R8;
             default:
                 Debug.Assert(false);
                 return RenderTextureFormat.Default;
@@ -134,9 +129,8 @@ public class BakeLightmap : MonoBehaviour
         switch (mode)
         {
             case AdditionalLightingMode.OneLight:
-                return TextureFormat.R8;
             case AdditionalLightingMode.TwoLights:
-                return TextureFormat.RG16;
+                return TextureFormat.R8;
             default:
                 Debug.Assert(false);
                 return TextureFormat.ARGB32;
@@ -157,22 +151,25 @@ public class BakeLightmap : MonoBehaviour
         }
     }
 
-    private static void ConfigureImportSettings(AdditionalLightingMode mode, TextureImporterSettings settings)
+    private static void ConfigureImporterSettings(AdditionalLightingMode mode, TextureImporter importer)
     {
         switch (mode)
         {
             case AdditionalLightingMode.OneLight:
-                settings.textureType = TextureImporterType.SingleChannel;
-                settings.textureShape = TextureImporterShape.Texture2D;
-                settings.mipmapEnabled = false;
-                settings.sRGBTexture = false;
-                settings.singleChannelComponent = TextureImporterSingleChannelComponent.Red;
-                break;
             case AdditionalLightingMode.TwoLights:
-                settings.textureType = TextureImporterType.Default;
+                var settings = new TextureImporterSettings();
+                settings.textureType = TextureImporterType.SingleChannel;
+                settings.singleChannelComponent = TextureImporterSingleChannelComponent.Red;
                 settings.textureShape = TextureImporterShape.Texture2D;
                 settings.mipmapEnabled = false;
                 settings.sRGBTexture = false;
+                importer.SetTextureSettings(settings);
+
+                var defaultPlatformSettings = importer.GetDefaultPlatformTextureSettings();
+                defaultPlatformSettings.name = "DefaultTexturePlatform";
+                defaultPlatformSettings.textureCompression = TextureImporterCompression.Uncompressed;
+                defaultPlatformSettings.format = TextureImporterFormat.Automatic;
+                importer.SetPlatformTextureSettings(defaultPlatformSettings);
                 break;
         }
     }
