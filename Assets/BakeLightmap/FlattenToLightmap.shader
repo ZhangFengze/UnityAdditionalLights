@@ -66,9 +66,8 @@ Shader "Flatten To Lightmap"
             uint mostImportantLightIndex = -1;
             Light mostImportantLight = (Light)0;
 
-            uint maxLights = _AdditionalLightsCount.x;
             UNITY_LOOP
-            for (uint lightIndex = 0u; lightIndex < maxLights; ++lightIndex)
+            for (uint lightIndex = 0u; lightIndex < _AdditionalLightsCount.x; ++lightIndex)
             {
                 Light light = GetAdditionalPerObjectLight(lightIndex, i.positionWS);
                 if (Brighter(light, mostImportantLight))
@@ -89,7 +88,7 @@ Shader "Flatten To Lightmap"
             Light light2 = (Light)0;
 
             UNITY_LOOP
-            for (uint lightIndex = 0u, maxLights = _AdditionalLightsCount.x; lightIndex < maxLights; ++lightIndex)
+            for (uint lightIndex = 0u; lightIndex < _AdditionalLightsCount.x; ++lightIndex)
             {
                 Light light = GetAdditionalPerObjectLight(lightIndex, i.positionWS);
                 if (Brighter(light, light1))
