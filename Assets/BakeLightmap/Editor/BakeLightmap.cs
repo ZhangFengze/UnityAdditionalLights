@@ -23,7 +23,7 @@ public class BakeLightmap : MonoBehaviour
         CoreUtils.SetRenderTarget(cmd, rt);
         CoreUtils.ClearRenderTarget(cmd, ClearFlag.All, Color.black);
 
-        var mat = new Material(Shader.Find("Flatten To Lightmap"));
+        var mat = new Material(Shader.Find("Bake Additional Lights"));
         int pass = mat.FindPass(GetShaderPass(mode));
         foreach (var o in CollectBakeObjects())
         {

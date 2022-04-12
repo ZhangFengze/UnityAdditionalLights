@@ -1,4 +1,4 @@
-Shader "Flatten To Lightmap"
+Shader "Bake Additional Lights"
 {
     Properties { }
 
@@ -63,11 +63,11 @@ Shader "Flatten To Lightmap"
 
         float frag1light(v2f i) : SV_Target
         {
-            uint mostImportantLightIndex = -1;
+            int mostImportantLightIndex = -1;
             Light mostImportantLight = (Light)0;
 
             UNITY_LOOP
-            for (uint lightIndex = 0u; lightIndex < _AdditionalLightsCount.x; ++lightIndex)
+            for (int lightIndex = 0u; lightIndex < _AdditionalLightsCount.x; ++lightIndex)
             {
                 Light light = GetAdditionalPerObjectLight(lightIndex, i.positionWS);
                 if (Brighter(light, mostImportantLight))
@@ -82,13 +82,13 @@ Shader "Flatten To Lightmap"
 
         float frag2lights(v2f i) : SV_Target
         {
-            uint lightIndex1 = -1;
-            uint lightIndex2 = -1;
+            int lightIndex1 = -1;
+            int lightIndex2 = -1;
             Light light1 = (Light)0;
             Light light2 = (Light)0;
 
             UNITY_LOOP
-            for (uint lightIndex = 0u; lightIndex < _AdditionalLightsCount.x; ++lightIndex)
+            for (int lightIndex = 0u; lightIndex < _AdditionalLightsCount.x; ++lightIndex)
             {
                 Light light = GetAdditionalPerObjectLight(lightIndex, i.positionWS);
                 if (Brighter(light, light1))
@@ -105,7 +105,7 @@ Shader "Flatten To Lightmap"
                 }
             }
 
-            uint combinedIndex = (lightIndex1 + 1) * 16 + (lightIndex2 + 1);
+            int combinedIndex = (lightIndex1 + 1) * 16 + (lightIndex2 + 1);
             return combinedIndex / 256.f;
         }
         ENDHLSL
