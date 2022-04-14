@@ -12,19 +12,19 @@ public static class BakeScene
     private static string MagicGameObjectName = "SetupSceneAdditionalLights";
     private const int MaxLights = 16;
 
-    [MenuItem("ZFZ/BakeNone")]
+    [MenuItem("Additional Lights/BakeNone")]
     public static void BakeNone()
     {
         Bake(AdditionalLightingMode.None);
     }
 
-    [MenuItem("ZFZ/BakeOneLight")]
+    [MenuItem("Additional Lights/BakeOneLight")]
     public static void BakeOneLight()
     {
         Bake(AdditionalLightingMode.OneLight);
     }
 
-    [MenuItem("ZFZ/BakeTwoLights")]
+    [MenuItem("Additional Lights/BakeTwoLights")]
     public static void BakeTwoLights()
     {
         Bake(AdditionalLightingMode.TwoLights);

@@ -3,13 +3,13 @@ using UnityEditor;
 
 public static class ViewLightIntersection
 {
-    [MenuItem("ZFZ/Draw Mode: Light Overlap")]
+    [MenuItem("Additional Lights/Draw Mode: Light Overlap")]
     static void SceneViewCustomSceneMode()
     {
         SceneView.lastActiveSceneView.SetSceneViewShaderReplace(Shader.Find("Light Overlap"), null);
     }
 
-    [MenuItem("ZFZ/Draw Mode: None")]
+    [MenuItem("Additional Lights/Draw Mode: None")]
     static void SceneViewClearSceneView()
     {
         foreach (SceneView sceneView in SceneView.sceneViews)
